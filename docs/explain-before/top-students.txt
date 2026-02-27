@@ -1,0 +1,44 @@
+Limit  (cost=26350.05..26350.10 rows=20 width=56) (actual time=276.593..276.599 rows=20 loops=1)
+  Output: s.id, s.name, i.name, (avg(r.score)), (max(r.score)), (count(r.id))
+  Buffers: shared hit=4375, temp read=610 written=1344
+  ->  Sort  (cost=26350.05..26600.05 rows=100000 width=56) (actual time=276.592..276.596 rows=20 loops=1)
+        Output: s.id, s.name, i.name, (avg(r.score)), (max(r.score)), (count(r.id))
+        Sort Key: (avg(r.score)) DESC, (max(r.score)) DESC
+        Sort Method: top-N heapsort  Memory: 29kB
+        Buffers: shared hit=4375, temp read=610 written=1344
+        ->  HashAggregate  (cost=20681.27..23689.08 rows=100000 width=56) (actual time=189.804..253.439 rows=100000 loops=1)
+              Output: s.id, s.name, i.name, avg(r.score), max(r.score), count(r.id)
+              Group Key: s.id, i.name
+              Planned Partitions: 4  Batches: 5  Memory Usage: 8241kB  Disk Usage: 7168kB
+              Buffers: shared hit=4375, temp read=610 written=1344
+              ->  Hash Join  (cost=7940.00..10400.02 rows=100000 width=44) (actual time=69.473..141.388 rows=100000 loops=1)
+                    Output: s.id, i.name, s.name, r.score, r.id
+                    Inner Unique: true
+                    Hash Cond: (s.institute_id = i.id)
+                    Buffers: shared hit=4375
+                    ->  Hash Join  (cost=3975.00..6172.51 rows=100000 width=33) (actual time=36.590..77.397 rows=100000 loops=1)
+                          Output: s.id, s.name, s.institute_id, r.score, r.id
+                          Inner Unique: true
+                          Hash Cond: (r.student_id = s.id)
+                          Buffers: shared hit=2660
+                          ->  Seq Scan on public.results r  (cost=0.00..1935.00 rows=100000 width=16) (actual time=0.005..6.870 rows=100000 loops=1)
+                                Output: r.id, r.student_id, r.course_id, r.institute_id, r.score, r.exam_date, r.created_at, r.updated_at
+                                Buffers: shared hit=935
+                          ->  Hash  (cost=2725.00..2725.00 rows=100000 width=21) (actual time=36.014..36.015 rows=100000 loops=1)
+                                Output: s.id, s.name, s.institute_id
+                                Buckets: 131072  Batches: 1  Memory Usage: 6489kB
+                                Buffers: shared hit=1725
+                                ->  Seq Scan on public.students s  (cost=0.00..2725.00 rows=100000 width=21) (actual time=0.004..12.985 rows=100000 loops=1)
+                                      Output: s.id, s.name, s.institute_id
+                                      Buffers: shared hit=1725
+                    ->  Hash  (cost=2715.00..2715.00 rows=100000 width=19) (actual time=32.379..32.379 rows=100000 loops=1)
+                          Output: i.name, i.id
+                          Buckets: 131072  Batches: 1  Memory Usage: 6103kB
+                          Buffers: shared hit=1715
+                          ->  Seq Scan on public.institutes i  (cost=0.00..2715.00 rows=100000 width=19) (actual time=0.005..12.959 rows=100000 loops=1)
+                                Output: i.name, i.id
+                                Buffers: shared hit=1715
+Planning:
+  Buffers: shared hit=16
+Planning Time: 0.268 ms
+Execution Time: 278.680 ms

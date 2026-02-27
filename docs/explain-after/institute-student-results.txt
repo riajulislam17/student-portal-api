@@ -1,0 +1,43 @@
+Limit  (cost=134.40..134.43 rows=10 width=60) (actual time=0.283..0.285 rows=10 loops=1)
+  Output: i.id, i.name, s.id, s.name, (count(r.id)), (avg(r.score)), (max(r.score))
+  Buffers: shared hit=38 read=13
+  ->  Sort  (cost=134.40..134.43 rows=10 width=60) (actual time=0.282..0.283 rows=10 loops=1)
+        Output: i.id, i.name, s.id, s.name, (count(r.id)), (avg(r.score)), (max(r.score))
+        Sort Key: (avg(r.score)) DESC NULLS LAST
+        Sort Method: quicksort  Memory: 26kB
+        Buffers: shared hit=38 read=13
+        ->  GroupAggregate  (cost=133.99..134.24 rows=10 width=60) (actual time=0.247..0.253 rows=10 loops=1)
+              Output: i.id, i.name, s.id, s.name, count(r.id), avg(r.score), max(r.score)
+              Group Key: s.id
+              Buffers: shared hit=35 read=13
+              ->  Sort  (cost=133.99..134.01 rows=10 width=48) (actual time=0.242..0.243 rows=10 loops=1)
+                    Output: s.id, i.id, i.name, s.name, r.id, r.score
+                    Sort Key: s.id
+                    Sort Method: quicksort  Memory: 25kB
+                    Buffers: shared hit=35 read=13
+                    ->  Nested Loop Left Join  (cost=4.96..133.82 rows=10 width=48) (actual time=0.080..0.225 rows=10 loops=1)
+                          Output: s.id, i.id, i.name, s.name, r.id, r.score
+                          Buffers: shared hit=32 read=13
+                          ->  Nested Loop  (cost=4.66..50.62 rows=10 width=36) (actual time=0.057..0.098 rows=10 loops=1)
+                                Output: i.id, i.name, s.id, s.name
+                                Buffers: shared hit=13 read=2
+                                ->  Index Scan using institutes_pkey on public.institutes i  (cost=0.29..8.31 rows=1 width=19) (actual time=0.011..0.011 rows=1 loops=1)
+                                      Output: i.id, i.name, i.slug, i.email, i.phone, i.address, i.created_at, i.updated_at
+                                      Index Cond: (i.id = 1)
+                                      Buffers: shared hit=3
+                                ->  Bitmap Heap Scan on public.students s  (cost=4.37..42.21 rows=10 width=21) (actual time=0.043..0.082 rows=10 loops=1)
+                                      Output: s.id, s.institute_id, s.name, s.class, s.roll, s.section, s.email, s.course_ids, s.created_at, s.updated_at
+                                      Recheck Cond: (s.institute_id = 1)
+                                      Heap Blocks: exact=10
+                                      Buffers: shared hit=10 read=2
+                                      ->  Bitmap Index Scan on idx_students_institute_id  (cost=0.00..4.37 rows=10 width=0) (actual time=0.029..0.029 rows=10 loops=1)
+                                            Index Cond: (s.institute_id = 1)
+                                            Buffers: shared read=2
+                          ->  Index Scan using idx_results_student_id on public.results r  (cost=0.29..8.31 rows=1 width=16) (actual time=0.012..0.012 rows=1 loops=10)
+                                Output: r.id, r.student_id, r.course_id, r.institute_id, r.score, r.exam_date, r.created_at, r.updated_at
+                                Index Cond: (r.student_id = s.id)
+                                Buffers: shared hit=19 read=11
+Planning:
+  Buffers: shared hit=359 read=12
+Planning Time: 1.062 ms
+Execution Time: 0.383 ms

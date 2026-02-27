@@ -1,0 +1,46 @@
+Limit  (cost=25432.27..25432.32 rows=20 width=56) (actual time=213.233..213.238 rows=20 loops=1)
+  Output: s.id, s.name, i.name, (avg(r.score)), (max(r.score)), (count(r.id))
+  Buffers: shared hit=32949 read=264
+  ->  Sort  (cost=25432.27..25682.27 rows=100000 width=56) (actual time=213.232..213.235 rows=20 loops=1)
+        Output: s.id, s.name, i.name, (avg(r.score)), (max(r.score)), (count(r.id))
+        Sort Key: (avg(r.score)) DESC, (max(r.score)) DESC
+        Sort Method: top-N heapsort  Memory: 30kB
+        Buffers: shared hit=32949 read=264
+        ->  GroupAggregate  (cost=1.21..22771.31 rows=100000 width=56) (actual time=0.129..193.679 rows=100000 loops=1)
+              Output: s.id, s.name, i.name, avg(r.score), max(r.score), count(r.id)
+              Group Key: s.id, i.name
+              Buffers: shared hit=32949 read=264
+              ->  Incremental Sort  (cost=1.21..20271.31 rows=100000 width=44) (actual time=0.124..142.700 rows=100000 loops=1)
+                    Output: s.id, i.name, s.name, r.score, r.id
+                    Sort Key: s.id, i.name
+                    Presorted Key: s.id
+                    Full-sort Groups: 3125  Sort Method: quicksort  Average Memory: 27kB  Peak Memory: 27kB
+                    Buffers: shared hit=32949 read=264
+                    ->  Merge Join  (cost=1.04..15771.31 rows=100000 width=44) (actual time=0.034..120.390 rows=100000 loops=1)
+                          Output: s.id, i.name, s.name, r.score, r.id
+                          Merge Cond: (s.id = r.student_id)
+                          Buffers: shared hit=32946 read=264
+                          ->  Nested Loop  (cost=0.59..10729.01 rows=100000 width=32) (actual time=0.018..74.283 rows=100000 loops=1)
+                                Output: s.id, s.name, i.name
+                                Inner Unique: true
+                                Buffers: shared hit=32000
+                                ->  Index Scan using students_pkey on public.students s  (cost=0.29..4332.29 rows=100000 width=21) (actual time=0.007..17.041 rows=100000 loops=1)
+                                      Output: s.id, s.institute_id, s.name, s.class, s.roll, s.section, s.email, s.course_ids, s.created_at, s.updated_at
+                                      Buffers: shared hit=2000
+                                ->  Memoize  (cost=0.30..0.40 rows=1 width=19) (actual time=0.000..0.000 rows=1 loops=100000)
+                                      Output: i.name, i.id
+                                      Cache Key: s.institute_id
+                                      Cache Mode: logical
+                                      Hits: 90000  Misses: 10000  Evictions: 0  Overflows: 0  Memory Usage: 1172kB
+                                      Buffers: shared hit=30000
+                                      ->  Index Scan using institutes_pkey on public.institutes i  (cost=0.29..0.39 rows=1 width=19) (actual time=0.001..0.001 rows=1 loops=10000)
+                                            Output: i.name, i.id
+                                            Index Cond: (i.id = s.institute_id)
+                                            Buffers: shared hit=30000
+                          ->  Index Scan using idx_results_student_id on public.results r  (cost=0.29..3542.29 rows=100000 width=16) (actual time=0.014..18.184 rows=100000 loops=1)
+                                Output: r.id, r.student_id, r.course_id, r.institute_id, r.score, r.exam_date, r.created_at, r.updated_at
+                                Buffers: shared hit=946 read=264
+Planning:
+  Buffers: shared hit=35 read=1
+Planning Time: 0.458 ms
+Execution Time: 213.656 ms

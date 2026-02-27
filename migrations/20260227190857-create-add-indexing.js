@@ -22,7 +22,6 @@ module.exports = {
       name: 'idx_results_course_id',
     });
 
-    //  NEW: institute_id added in latest schema
     await queryInterface.addIndex('results', ['institute_id'], {
       name: 'idx_results_institute_id',
     });
@@ -31,29 +30,30 @@ module.exports = {
       name: 'idx_results_exam_date',
     });
 
-    //  very common query: institute + date range
+    //  institute + date range
     await queryInterface.addIndex('results', ['institute_id', 'exam_date'], {
       name: 'idx_results_institute_date',
+    });
+
+    //  student + date range (your down() had this)
+    await queryInterface.addIndex('results', ['student_id', 'exam_date'], {
+      name: 'idx_results_student_date',
     });
 
     await queryInterface.sequelize.query('ANALYZE;');
   },
 
   async down(queryInterface) {
-    // students
-    await queryInterface.removeIndex('students', 'idx_students_institute_id');
-    await queryInterface.removeIndex('students', 'idx_students_roll');
-    await queryInterface.removeIndex('students', 'idx_students_class_section');
-    await queryInterface.sequelize.query(
-      'DROP INDEX IF EXISTS idx_students_course_ids_gin;',
-    );
+    await queryInterface.sequelize.query(`
+      DROP INDEX IF EXISTS idx_students_institute_id;
+      DROP INDEX IF EXISTS idx_students_course_ids_gin;
 
-    // results
-    await queryInterface.removeIndex('results', 'idx_results_student_id');
-    await queryInterface.removeIndex('results', 'idx_results_course_id');
-    await queryInterface.removeIndex('results', 'idx_results_institute_id');
-    await queryInterface.removeIndex('results', 'idx_results_exam_date');
-    await queryInterface.removeIndex('results', 'idx_results_institute_date');
-    await queryInterface.removeIndex('results', 'idx_results_student_date');
+      DROP INDEX IF EXISTS idx_results_student_id;
+      DROP INDEX IF EXISTS idx_results_course_id;
+      DROP INDEX IF EXISTS idx_results_institute_id;
+      DROP INDEX IF EXISTS idx_results_exam_date;
+      DROP INDEX IF EXISTS idx_results_institute_date;
+      DROP INDEX IF EXISTS idx_results_student_date;
+    `);
   },
 };

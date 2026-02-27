@@ -1,0 +1,45 @@
+Limit  (cost=5181.63..5181.65 rows=10 width=60) (actual time=23.514..23.518 rows=10 loops=1)
+  Output: i.id, i.name, s.id, s.name, (count(r.id)), (avg(r.score)), (max(r.score))
+  Buffers: shared hit=2669
+  ->  Sort  (cost=5181.63..5181.65 rows=10 width=60) (actual time=23.513..23.516 rows=10 loops=1)
+        Output: i.id, i.name, s.id, s.name, (count(r.id)), (avg(r.score)), (max(r.score))
+        Sort Key: (avg(r.score)) DESC NULLS LAST
+        Sort Method: quicksort  Memory: 26kB
+        Buffers: shared hit=2669
+        ->  GroupAggregate  (cost=5181.21..5181.46 rows=10 width=60) (actual time=23.486..23.493 rows=10 loops=1)
+              Output: i.id, i.name, s.id, s.name, count(r.id), avg(r.score), max(r.score)
+              Group Key: s.id
+              Buffers: shared hit=2666
+              ->  Sort  (cost=5181.21..5181.24 rows=10 width=48) (actual time=23.477..23.479 rows=10 loops=1)
+                    Output: s.id, i.id, i.name, s.name, r.id, r.score
+                    Sort Key: s.id
+                    Sort Method: quicksort  Memory: 25kB
+                    Buffers: shared hit=2666
+                    ->  Nested Loop  (cost=2975.42..5181.05 rows=10 width=48) (actual time=9.647..23.441 rows=10 loops=1)
+                          Output: s.id, i.id, i.name, s.name, r.id, r.score
+                          Buffers: shared hit=2663
+                          ->  Index Scan using institutes_pkey on public.institutes i  (cost=0.29..8.31 rows=1 width=19) (actual time=0.011..0.014 rows=1 loops=1)
+                                Output: i.id, i.name, i.slug, i.email, i.phone, i.address, i.created_at, i.updated_at
+                                Index Cond: (i.id = 1)
+                                Buffers: shared hit=3
+                          ->  Hash Right Join  (cost=2975.12..5172.64 rows=10 width=33) (actual time=9.633..23.416 rows=10 loops=1)
+                                Output: s.id, s.name, s.institute_id, r.id, r.score
+                                Inner Unique: true
+                                Hash Cond: (r.student_id = s.id)
+                                Buffers: shared hit=2660
+                                ->  Seq Scan on public.results r  (cost=0.00..1935.00 rows=100000 width=16) (actual time=0.008..6.695 rows=100000 loops=1)
+                                      Output: r.id, r.student_id, r.course_id, r.institute_id, r.score, r.exam_date, r.created_at, r.updated_at
+                                      Buffers: shared hit=935
+                                ->  Hash  (cost=2975.00..2975.00 rows=10 width=21) (actual time=8.204..8.205 rows=10 loops=1)
+                                      Output: s.id, s.name, s.institute_id
+                                      Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                                      Buffers: shared hit=1725
+                                      ->  Seq Scan on public.students s  (cost=0.00..2975.00 rows=10 width=21) (actual time=0.796..8.188 rows=10 loops=1)
+                                            Output: s.id, s.name, s.institute_id
+                                            Filter: (s.institute_id = 1)
+                                            Rows Removed by Filter: 99990
+                                            Buffers: shared hit=1725
+Planning:
+  Buffers: shared hit=245
+Planning Time: 0.710 ms
+Execution Time: 23.617 ms
