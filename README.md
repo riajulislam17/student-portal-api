@@ -24,15 +24,15 @@ CREATE DATABASE DB_NAME;
 ## Run (Before Indexes)
 
 ```bash
-npx sequelize db:migrate:undo --name 20260227190216-create-all-table.js
-npm run db:seed
+npx sequelize db:migrate --name 20260227190216-create-all-table.js
+npx sequelize-cli db:seed:all
 npm run perf:before
 ```
 
 ## Apply Index Migration + After
 
 ```bash
-npx sequelize db:migrate:undo --name 20260227190857-create-add-indexing.js
+npx sequelize db:migrate --name 20260227190857-create-add-indexing.js
 npm run perf:after
 ```
 

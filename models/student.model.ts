@@ -19,8 +19,8 @@ export class Student extends Model<Student> {
   @Column({ type: DataType.STRING, allowNull: false })
   declare class: string;
 
-//   @Column({ type: DataType.INTEGER, allowNull: false })
-//   declare roll: number;
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  declare roll: number;
 
   @Column({ type: DataType.STRING, allowNull: false })
   declare section: string;

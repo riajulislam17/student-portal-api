@@ -42,8 +42,8 @@ export class ReportsService {
   }
 
   async topCoursesByYear(year: number, top = 10) {
-    const startDate = new Date(Date.UTC(year, 0, 1)); // Jan 1
-    const endDate = new Date(Date.UTC(year + 1, 0, 1)); // Next Jan 1
+    const startDate = new Date(Date.UTC(year, 0, 1));
+    const endDate = new Date(Date.UTC(year + 1, 0, 1));
 
     const rows = await this.sequelize.query(
       `
@@ -56,7 +56,7 @@ export class ReportsService {
     JOIN courses c ON c.id = r.course_id
     WHERE r.exam_date >= :startDate
       AND r.exam_date <  :endDate
-    GROUP BY "year", c.id, c.title
+    GROUP BY EXTRACT(YEAR FROM r.exam_date), c.id, c.title
     ORDER BY "takenCount" DESC
     LIMIT :top
     `,

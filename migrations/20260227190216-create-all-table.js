@@ -2,33 +2,21 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('results', {
+    await queryInterface.createTable('users', {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
         allowNull: false,
       },
-      student_id: {
-        type: Sequelize.INTEGER,
+      name: { type: Sequelize.STRING, allowNull: false, unique: false },
+      email: { type: Sequelize.STRING, allowNull: false, unique: true },
+      password: { type: Sequelize.STRING, allowNull: false },
+      role: {
+        type: Sequelize.STRING,
         allowNull: false,
-        references: { model: 'students', key: 'id' },
-        onDelete: 'CASCADE',
+        defaultValue: 'student',
       },
-      course_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: { model: 'courses', key: 'id' },
-        onDelete: 'CASCADE',
-      },
-      institute_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: { model: 'institutes', key: 'id' },
-        onDelete: 'CASCADE',
-      },
-      score: { type: Sequelize.FLOAT, allowNull: false },
-      exam_date: { type: Sequelize.DATE, allowNull: false },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,
@@ -41,15 +29,18 @@ module.exports = {
       },
     });
 
-    await queryInterface.createTable('courses', {
+    await queryInterface.createTable('institutes', {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
         allowNull: false,
       },
-      title: { type: Sequelize.STRING, allowNull: false },
+      name: { type: Sequelize.STRING, allowNull: false },
       slug: { type: Sequelize.STRING, allowNull: false, unique: true },
+      email: { type: Sequelize.STRING, allowNull: true, unique: true },
+      phone: { type: Sequelize.STRING, allowNull: false, unique: true },
+      address: { type: Sequelize.STRING, allowNull: true },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,
@@ -97,18 +88,15 @@ module.exports = {
       },
     });
 
-    await queryInterface.createTable('institutes', {
+    await queryInterface.createTable('courses', {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
         allowNull: false,
       },
-      name: { type: Sequelize.STRING, allowNull: false },
+      title: { type: Sequelize.STRING, allowNull: false },
       slug: { type: Sequelize.STRING, allowNull: false, unique: true },
-      email: { type: Sequelize.STRING, allowNull: true, unique: true },
-      phone: { type: Sequelize.STRING, allowNull: false, unique: true },
-      address: { type: Sequelize.STRING, allowNull: true },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,
@@ -121,21 +109,33 @@ module.exports = {
       },
     });
 
-    await queryInterface.createTable('users', {
+    await queryInterface.createTable('results', {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
         allowNull: false,
       },
-      name: { type: Sequelize.STRING, allowNull: false, unique: false },
-      email: { type: Sequelize.STRING, allowNull: false, unique: true },
-      password: { type: Sequelize.STRING, allowNull: false },
-      role: {
-        type: Sequelize.STRING,
+      student_id: {
+        type: Sequelize.INTEGER,
         allowNull: false,
-        defaultValue: 'student',
+        references: { model: 'students', key: 'id' },
+        onDelete: 'CASCADE',
       },
+      course_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: { model: 'courses', key: 'id' },
+        onDelete: 'CASCADE',
+      },
+      institute_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: { model: 'institutes', key: 'id' },
+        onDelete: 'CASCADE',
+      },
+      score: { type: Sequelize.FLOAT, allowNull: false },
+      exam_date: { type: Sequelize.DATE, allowNull: false },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,
