@@ -25,9 +25,9 @@ export class UsersService {
       role: dto.role,
     } as any);
     return {
-      id: u.dataValues.id,
-      email: u.dataValues.email,
-      role: u.dataValues.role,
+      id: u.id,
+      email: u.email,
+      role: u.role,
     };
   }
 
@@ -44,7 +44,7 @@ export class UsersService {
       limit: pagination.limit,
       total: count,
       data: rows.map((r) => {
-        const user = r.toJSON() as User;
+        const user = r.toJSON();
         return {
           id: user.id,
           email: user.email,
@@ -58,39 +58,39 @@ export class UsersService {
 
   async findOne(id: number) {
     const r = await this.user.findByPk(id);
-    if (!r) throw new NotFoundException('user not found');
+    if (!r) throw new NotFoundException('User not found');
 
-    const user = r.dataValues;
     return {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
+      id: r.id,
+      email: r.email,
+      role: r.role,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
     };
   }
 
   async update(id: number, dto: UpdateUserDTO) {
     const r = await this.user.findByPk(id);
-    if (!r) throw new NotFoundException('user not found');
+    if (!r) throw new NotFoundException('User not found');
+
     const patch: any = { ...dto };
     if (dto.password) patch.password = await bcrypt.hash(dto.password, 10);
     await r.update(patch);
 
-    const user = r.dataValues;
     return {
-      id: user.id,
-      email: user.email,
-      role: user.role,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
+      id: r.id,
+      email: r.email,
+      role: r.role,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
     };
   }
 
   async remove(id: number) {
     const r = await this.user.findByPk(id);
-    if (!r) throw new NotFoundException('user not found');
+    if (!r) throw new NotFoundException('User not found');
+
     await r.destroy();
-    return { success: true };
+    return;
   }
 }

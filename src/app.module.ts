@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { buildDatabaseConfig } from './common/database/database.config';
 import { User } from 'models/user.model';
+import { InstitutesModule } from './modules/institutes/institutes.module';
 
 @Module({
   imports: [
@@ -16,12 +17,13 @@ import { User } from 'models/user.model';
       useFactory: (config: ConfigService) => ({
         ...buildDatabaseConfig(),
         models: [User],
-        autoLoadModels: false,
+        autoLoadModels: true,
         synchronize: false,
       }),
     }),
     AuthModule,
     UsersModule,
+    InstitutesModule,
   ],
 })
 export class AppModule {}
