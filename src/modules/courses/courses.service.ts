@@ -22,7 +22,7 @@ export class CoursesService {
     return this.course.create({
       ...dto,
       slug,
-    } as any);
+    } as Course);
   }
 
   async findAll(page?: number, limit?: number) {
@@ -49,7 +49,7 @@ export class CoursesService {
 
   async update(id: number, dto: UpdateCourseDTO) {
     const item = await this.findOne(id);
-    await item.update(dto as any);
+    await item.update(dto as Course);
     return item;
   }
 

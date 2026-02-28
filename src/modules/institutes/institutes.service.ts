@@ -22,7 +22,7 @@ export class InstitutesService {
       slug = `${baseSlug}-${count++}`;
     }
 
-    return this.institute.create({ ...dto, slug } as any);
+    return this.institute.create({ ...dto, slug } as Institute);
   }
 
   async findAll(page?: number, limit?: number) {

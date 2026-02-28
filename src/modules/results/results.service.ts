@@ -20,7 +20,7 @@ export class ResultsService {
       instituteId: dto.instituteId,
       score: dto.score,
       examDate: new Date(dto.examDate),
-    } as any);
+    } as Result);
   }
 
   async findAll(page?: number, limit?: number) {

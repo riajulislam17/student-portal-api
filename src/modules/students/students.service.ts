@@ -10,7 +10,7 @@ export class StudentsService {
   constructor(@InjectModel(Student) private readonly student: typeof Student) {}
 
   async create(dto: CreateStudentDTO) {
-    return this.student.create(dto as any);
+    return this.student.create(dto as Student);
   }
 
   async findAll(page?: number, limit?: number) {
@@ -37,7 +37,7 @@ export class StudentsService {
 
   async update(id: number, dto: UpdateStudentDTO) {
     const item = await this.findOne(id);
-    await item.update(dto as any);
+    await item.update(dto as Student);
     return item;
   }
 

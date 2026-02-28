@@ -31,7 +31,6 @@ export class ReportsController {
 
   @Get('top-students')
   topStudents(@Query('top') top = '20') {
-    console.log('first');
     return this.reportsService.topStudents(Number(top));
   }
 }

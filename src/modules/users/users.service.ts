@@ -23,7 +23,7 @@ export class UsersService {
       email: dto.email,
       password: hash,
       role: dto.role,
-    } as any);
+    } as User);
     return {
       id: u.id,
       email: u.email,
