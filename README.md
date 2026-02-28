@@ -8,6 +8,13 @@ NestJS + Sequelize + PostgreSQL API:
 - Before/After indexing performance artifacts via `EXPLAIN (ANALYZE, BUFFERS, VERBOSE)`
 - Sequelize CLI migrations + seeders (0.1M rows/table)
 
+## Documentation
+- JWT approach: `docs/jwt-approach.md`
+- API queries and mutations: `docs/api-queries-mutations.md`
+- SQL schema script: `docs/sql/schema.sql`
+- SQL indexes script: `docs/sql/indexes.sql`
+- Performance comparison report: `docs/performance-report.md`
+
 ## Setup
 
 ```bash

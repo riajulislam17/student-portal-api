@@ -10,7 +10,7 @@ EXPLAIN (ANALYZE, BUFFERS, VERBOSE)
 
 Dataset:
 
-- ~100,000 rows per table
+- 0.1M rows per table
 - PostgreSQL
 - NestJS + Sequelize
 - Performance measured using standalone SQL script (no API overhead)
