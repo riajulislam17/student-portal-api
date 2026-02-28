@@ -2,7 +2,7 @@
 
 NestJS + Sequelize + PostgreSQL API:
 
-- Auth (JWT) + role validation at DTO level (no DB enum)
+- Auth (JWT)
 - CRUD: users, institutes, courses, students, results
 - Reports (3 endpoints)
 - Before/After indexing performance artifacts via `EXPLAIN (ANALYZE, BUFFERS, VERBOSE)`
